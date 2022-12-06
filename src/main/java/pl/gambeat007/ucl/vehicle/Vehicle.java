@@ -7,6 +7,8 @@ import pl.gambeat007.ucl.model.UCLBase;
 import javax.persistence.*;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 
 @Entity
 @Table(name = "vehicles")
