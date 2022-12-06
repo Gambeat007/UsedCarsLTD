@@ -7,9 +7,7 @@ import lombok.ToString;
 import pl.gambeat007.ucl.model.TransactionType;
 import pl.gambeat007.ucl.model.UCLBase;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -26,6 +24,7 @@ public class Customer extends UCLBase {
     @Column(name = "password")
     private String password;
     @Column(name = "transaction_type")
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
     public Customer() {
