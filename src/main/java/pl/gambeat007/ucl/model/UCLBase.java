@@ -6,10 +6,9 @@ import javax.persistence.*;
 
 @Getter
 @MappedSuperclass
-public class UCLBase {
+public abstract class UCLBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
 }
