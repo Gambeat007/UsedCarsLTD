@@ -1,7 +1,9 @@
 package pl.gambeat007.ucl.security;
 
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.context.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -12,8 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import pl.gambeat007.ucl.security.jwt.AuthEntryPointJwt;
+import pl.gambeat007.ucl.security.jwt.AuthExceptionHandler;
 import pl.gambeat007.ucl.security.jwt.AuthTokenFilter;
 import pl.gambeat007.ucl.security.services.UserDetailsServiceImpl;
 
@@ -25,7 +26,7 @@ public class WebSecurityConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
     @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private AuthExceptionHandler unauthorizedHandler;
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
@@ -50,8 +51,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
@@ -60,9 +61,9 @@ public class WebSecurityConfig {
                 .antMatchers(h2ConsolePath + "/**").permitAll()
                 .anyRequest().authenticated();
 
-        http.headers().frameOptions().sameOrigin();
-        http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+        httpSecurity.headers().frameOptions().sameOrigin();
+        httpSecurity.authenticationProvider(authenticationProvider());
+        httpSecurity.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        return httpSecurity.build();
     }
 }
