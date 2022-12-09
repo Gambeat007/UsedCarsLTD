@@ -2,9 +2,11 @@ package pl.gambeat007.ucl.vehicle;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import pl.gambeat007.ucl.model.FuelType;
 
 import java.util.List;
+@Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     @Query("SELECT vehicle FROM Vehicle vehicle WHERE vehicle.make=?1")
