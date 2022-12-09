@@ -11,7 +11,17 @@ CREATE TABLE CUSTOMERS (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL,
     email VARCHAR(50) NOT NULL,
-    password VARCHAR(30) NOT NULL,
-    transaction_type VARCHAR(10) NOT NULL,
-    vehicle_id BIGINT NOT NULL
+    password VARCHAR(120) NOT NULL
 );
+
+CREATE TABLE ROLES (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(20)
+);
+
+-- CREATE TABLE USERS (
+--     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+--     username VARCHAR(30),
+--     email VARCHAR(50),
+--     password VARCHAR(120)
+-- );
