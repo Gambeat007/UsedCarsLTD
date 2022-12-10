@@ -6,6 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Repository class with JpaRepository (and it's methods) implemented plus
+ * additional own methods and queries defined
+ */
+
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
