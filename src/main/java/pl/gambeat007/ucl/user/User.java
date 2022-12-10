@@ -1,8 +1,8 @@
-package pl.gambeat007.ucl.security.user;
+package pl.gambeat007.ucl.user;
 
 import lombok.*;
 import pl.gambeat007.ucl.model.UCLBase;
-import pl.gambeat007.ucl.security.role.Role;
+import pl.gambeat007.ucl.role.Role;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;

@@ -1,4 +1,4 @@
-package pl.gambeat007.ucl.security.user;
+package pl.gambeat007.ucl.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

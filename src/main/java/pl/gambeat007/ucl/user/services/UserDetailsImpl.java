@@ -1,5 +1,6 @@
-package pl.gambeat007.ucl.security.services;
+package pl.gambeat007.ucl.user.services;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -8,11 +9,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import pl.gambeat007.ucl.security.user.User;
-
+import pl.gambeat007.ucl.user.User;
 
 public class UserDetailsImpl implements UserDetails {
-    private static final long serialVersionUID = 1326148796457823614L;
+    @Serial
+    private static final long serialVersionUID = 1L;
     private Long id;
     private String username;
     private String email;
