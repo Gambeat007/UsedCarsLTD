@@ -2,10 +2,12 @@ package pl.gambeat007.ucl;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+/**
+ * Application main class.
+ */
 
 @SpringBootApplication
-@EnableWebMvc
 public class UsedCarsLTDApplication {
 
     public static void main(String[] args) {
