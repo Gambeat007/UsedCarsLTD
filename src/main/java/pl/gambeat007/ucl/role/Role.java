@@ -1,8 +1,7 @@
-package pl.gambeat007.ucl.security.role;
+package pl.gambeat007.ucl.role;
 
 import lombok.*;
 import pl.gambeat007.ucl.model.UCLBase;
-import pl.gambeat007.ucl.model.UCLRole;
 
 import javax.persistence.*;
 
