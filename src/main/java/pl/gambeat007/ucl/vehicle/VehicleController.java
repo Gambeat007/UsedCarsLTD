@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller cLass for maintaining mapped methods  (company vehicles),
+ * including access levels for logged users
+ */
+
 @RestController
 @RequestMapping("/ucl")
 @RequiredArgsConstructor
@@ -16,7 +21,9 @@ public class VehicleController {
 
     private final VehicleRepository vehicleRepository;
 
+    // retrieve all vehicle(s) available for sale
     @GetMapping("/vehicles")
+    // ROLE_PUBLIC - most limited access
     @PreAuthorize("hasRole('PUBLIC')")
     public ResponseEntity<List<Vehicle>> getAllVehicles() {
         try {
@@ -26,6 +33,7 @@ public class VehicleController {
         }
     }
 
+    // retrieve vehicle(s) by :make
     @GetMapping("/vehicles/by-make{make}")
     @PreAuthorize("hasRole('PUBLIC')")
     public ResponseEntity<List<Vehicle>> findByMake(String make) {
@@ -40,6 +48,7 @@ public class VehicleController {
         }
     }
 
+    // retrieve vehicle(s) by :model
     @GetMapping("/vehicles/by-model{model}")
     @PreAuthorize("hasRole('PUBLIC')")
     public ResponseEntity<List<Vehicle>> findByModel(String model) {
@@ -54,7 +63,10 @@ public class VehicleController {
         }
     }
 
+
+    // retrieve vehicle(s) by :prodYear
     @GetMapping("/vehicles/by-production-year{prodYear}")
+    // ROLE_CUSTOMER - wider access for company customers
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<Vehicle>> findByProdYear (int prodYear) {
         try {
@@ -68,6 +80,7 @@ public class VehicleController {
         }
     }
 
+    // retrieve vehicle(s) by :fuelType
     @GetMapping("/vehicles/by-fuel-type{fuelType}")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<Vehicle>> findByFuelType (FuelType fuelType) {
@@ -82,6 +95,7 @@ public class VehicleController {
         }
     }
 
+    // retrieve vehicle(s) cheaper than given :price
     @GetMapping("/vehicles/by-price{price}")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<List<Vehicle>> findCheaperThanGivenPrice (double price) {
@@ -96,6 +110,8 @@ public class VehicleController {
         }
     }
 
+
+    // Add new vehicle to database
     @PostMapping("/vehicles/add-new")
     // ROLE_OWNER -> unlimited access
     @PreAuthorize("hasRole('OWNER')")
@@ -109,6 +125,7 @@ public class VehicleController {
         }
     }
 
+    // Update existing vehicle parameters
     @PutMapping("/vehicles/update{id}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Vehicle> updateVehicle(@PathVariable("id") long id, @RequestBody Vehicle vehicle) {
@@ -126,6 +143,7 @@ public class VehicleController {
         }
     }
 
+    // Update existing vehicle price
     @PatchMapping("/vehicles/update-price{id}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Vehicle> updateVehiclePrice(@PathVariable ("id") long id, @RequestBody Vehicle vehicle) {
@@ -139,6 +157,7 @@ public class VehicleController {
         }
     }
 
+    // Delete vehicle from database
     @DeleteMapping("/vehicles/delete{id}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Vehicle> deleteVehicle(long id) {
