@@ -3,8 +3,8 @@ package pl.gambeat007.ucl.vehicle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pl.gambeat007.ucl.model.FuelType;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +16,19 @@ public class VehicleController {
 
     private final VehicleRepository vehicleRepository;
 
-    @GetMapping("/vehicles/make{make}")
-    public ResponseEntity<List<Vehicle>> findByMake(@PathVariable("make") String make) {
+    @GetMapping("/vehicles")
+    @PreAuthorize("hasRole('PUBLIC')")
+    public ResponseEntity<List<Vehicle>> getAllVehicles() {
+        try {
+            return new ResponseEntity<>(vehicleRepository.findAll(), HttpStatus.OK);
+        } catch(Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/vehicles/by-make{make}")
+    @PreAuthorize("hasRole('PUBLIC')")
+    public ResponseEntity<List<Vehicle>> findByMake(String make) {
         try {
             List<Vehicle> vehicles = vehicleRepository.findByMake(make);
             if (vehicles.isEmpty()) {
@@ -25,11 +36,69 @@ public class VehicleController {
             }
             return new ResponseEntity<>(vehicles, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("/vehicles/add")
+    @GetMapping("/vehicles/by-model{model}")
+    @PreAuthorize("hasRole('PUBLIC')")
+    public ResponseEntity<List<Vehicle>> findByModel(String model) {
+        try {
+            List<Vehicle> vehicles = vehicleRepository.findByModel(model);
+            if (vehicles.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(vehicles, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/vehicles/by-production-year{prodYear}")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<List<Vehicle>> findByProdYear (int prodYear) {
+        try {
+            List<Vehicle> vehicles = vehicleRepository.findByProdYear(prodYear);
+            if (vehicles.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(vehicles, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/vehicles/by-fuel-type{fuelType}")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<List<Vehicle>> findByFuelType (FuelType fuelType) {
+        try {
+            List<Vehicle> vehicles = vehicleRepository.findByFuelType(fuelType);
+            if (vehicles.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(vehicles, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/vehicles/by-price{price}")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<List<Vehicle>> findCheaperThanGivenPrice (double price) {
+        try {
+            List<Vehicle> vehicles = vehicleRepository.findCheaperThan(price);
+            if (vehicles.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(vehicles, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/vehicles/add-new")
+    // ROLE_OWNER -> unlimited access
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Vehicle> addVehicle (@RequestBody Vehicle vehicle) {
         try {
             Vehicle _vehicle = vehicleRepository.save(new Vehicle(vehicle.getMake(), vehicle.getModel(),
@@ -40,7 +109,8 @@ public class VehicleController {
         }
     }
 
-    @PutMapping("/vehicles/update-all{id}")
+    @PutMapping("/vehicles/update{id}")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Vehicle> updateVehicle(@PathVariable("id") long id, @RequestBody Vehicle vehicle) {
         Optional<Vehicle> vehicleToUpdate = vehicleRepository.findById(id);
         if (vehicleToUpdate.isPresent()) {
@@ -57,7 +127,8 @@ public class VehicleController {
     }
 
     @PatchMapping("/vehicles/update-price{id}")
-    public ResponseEntity<Vehicle> updateVehiclePrice(@PathVariable long id, @RequestBody Vehicle vehicle) {
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Vehicle> updateVehiclePrice(@PathVariable ("id") long id, @RequestBody Vehicle vehicle) {
         Optional<Vehicle> vehicleToUpdate = vehicleRepository.findById(id);
         if(vehicleToUpdate.isPresent()) {
             Vehicle _vehicle = vehicleToUpdate.get();
@@ -69,64 +140,13 @@ public class VehicleController {
     }
 
     @DeleteMapping("/vehicles/delete{id}")
-    public ResponseEntity<Vehicle> deleteVehicle(@PathVariable long id) {
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Vehicle> deleteVehicle(long id) {
         try {
             vehicleRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/vehicles/model{model}")
-    public ResponseEntity<List<Vehicle>> findByModel(@PathVariable("model") String model) {
-        try {
-            List<Vehicle> vehicles = vehicleRepository.findByModel(model);
-            if (vehicles.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(vehicles, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/vehicles/prod-year{prodYear}")
-    public ResponseEntity<List<Vehicle>> findByProdYear (@PathVariable("prodYear") int prodYear) {
-        try {
-            List<Vehicle> vehicles = vehicleRepository.findByProdYear(prodYear);
-            if (vehicles.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(vehicles, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/vehicles/cheaper-than-given-price{price}")
-    public ResponseEntity<List<Vehicle>> findCheaperThanGivenPrice (@PathVariable("price") double price) {
-        try {
-            List<Vehicle> vehicles = vehicleRepository.findCheaperThan(price);
-            if (vehicles.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(vehicles, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/vehicles/fuel-type{fuelType}")
-    public ResponseEntity<List<Vehicle>> findByFuelType (@PathVariable("fuelType") FuelType fuelType) {
-        try {
-            List<Vehicle> vehicles = vehicleRepository.findByFuelType(fuelType);
-            if (vehicles.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(vehicles, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
