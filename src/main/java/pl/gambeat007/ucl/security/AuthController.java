@@ -36,51 +36,57 @@ import pl.gambeat007.ucl.user.services.UserDetailsImpl;
 import pl.gambeat007.ucl.user.User;
 import pl.gambeat007.ucl.user.UserRepository;
 
+/**
+ *  Controller cLass for maintaining mapped user method(s),
+ *  authentication, log -in/out process
+ */
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/ucl/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final AuthenticationManager authenticationManager;
-
     private final UserRepository userRepository;
-
     private final RoleRepository roleRepository;
-
     private final PasswordEncoder encoder;
-
     private final JwtUtils jwtUtils;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginRequest.getUsername(), loginRequest.getPassword()));
+        // Username and password authentication
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        // update context with authentication object
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        // get user details from authentication object
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        // generate jwt
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
         List<String> roles = userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
+        // response with jwt and user details
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        // existing username & email check
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Username already taken!"));
         }
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Email already in use!"));
         }
-
+        // create new user
         User user = new User(signUpRequest.getUsername(), signUpRequest.getEmail(), encoder.encode(signUpRequest.getPassword()));
         Set<String> setOfRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
-
+        // if role is not specified - "give" public
         if (setOfRoles == null) {
             Role noRestrictions = roleRepository.findByName(UCLRole.ROLE_PUBLIC).orElseThrow(() ->
                     new RuntimeException("Role not found."));
@@ -107,10 +113,12 @@ public class AuthController {
             });
         }
         user.setRoles(roles);
+        // save user to database
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("Registration successful!"));
     }
 
+    // "clear cookie" method
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         ResponseCookie cookie = jwtUtils.cleanJwtCookie();
