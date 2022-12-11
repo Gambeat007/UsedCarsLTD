@@ -10,7 +10,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 import io.jsonwebtoken.*;
-import pl.gambeat007.ucl.security.services.UserDetailsImpl;
+
+import pl.gambeat007.ucl.user.services.UserDetailsImpl;
 
 @Component
 public class JwtUtils {
@@ -48,6 +49,7 @@ public class JwtUtils {
     try {
       Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
       return true;
+
     } catch (SignatureException e) {
       logger.error("JWT signature is invalid: {}", e.getMessage());
     } catch (MalformedJwtException e) {
