@@ -5,11 +5,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import pl.gambeat007.ucl.user.User;
+
+/**
+ * This class implements UserDetails interface to get more user data, also converts Set<Role> into
+ * List<GrantedAuthority> -> important to work with Spring Security and Authentication object later
+ */
 
 public class UserDetailsImpl implements UserDetails {
     @Serial
@@ -30,7 +38,8 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream()
+        List<GrantedAuthority> authorities = user.getRoles()
+                .stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
 
