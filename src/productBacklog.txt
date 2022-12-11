@@ -1,0 +1,26 @@
+As a company owner I want to retrieve list of all users (with their roles)
+As a company owner I want to make sure that users can get access to their own content only (limited access)
+As a company owner I want to manipulate vehicles database
+As a company owner I want to see all customers transactions with no access restrictions
+
+As a company customer I want to check my own transactions/orders
+As a company customer I want to buy a car from the company
+As a company customer I want to sell a car to the company
+As a company customer I want to get access to more filter/methods for cars manipulating
+
+As a public user I want to log in/out
+As a public user I want to see cars available to buy
+As a public user I want to filter  cars available to buy
+
+
+Future releases:
+
+- application frontend part:
+    - access to all methods with security restrictions
+    - nicer layout :)
+    - fully working frontend-backend connection
+
+- more backend features:
+    - customer service features:
+        - transactions (sale, purchase)
+        - new relations -> customers & vehicles
