@@ -5,6 +5,10 @@ import pl.gambeat007.ucl.model.UCLBase;
 
 import javax.persistence.*;
 
+/**
+ * This is a model class for users roles
+ */
+
 @Getter
 @Setter
 
