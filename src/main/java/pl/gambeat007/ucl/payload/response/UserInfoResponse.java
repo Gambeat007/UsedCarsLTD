@@ -2,6 +2,7 @@ package pl.gambeat007.ucl.payload.response;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.List;
 
 @Getter
