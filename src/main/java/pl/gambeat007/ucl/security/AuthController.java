@@ -7,7 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -38,17 +39,18 @@ import pl.gambeat007.ucl.user.UserRepository;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/ucl/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    @Autowired
-    AuthenticationManager authenticationManager;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
-    @Autowired
-    PasswordEncoder encoder;
-    @Autowired
-    JwtUtils jwtUtils;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final UserRepository userRepository;
+
+    private final RoleRepository roleRepository;
+
+    private final PasswordEncoder encoder;
+
+    private final JwtUtils jwtUtils;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
