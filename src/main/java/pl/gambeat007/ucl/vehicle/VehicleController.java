@@ -14,6 +14,7 @@ import java.util.Optional;
  * including access levels for logged users
  */
 
+@CrossOrigin
 @RestController
 @RequestMapping("/ucl")
 @RequiredArgsConstructor
